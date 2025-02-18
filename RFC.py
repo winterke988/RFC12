@@ -7,49 +7,6 @@ import joblib
 import streamlit as st
 import matplotlib.pyplot as plt
 import shap
-#导入训练集数据
-train_data =pd.read_csv("D:\\numpy\\001科研\\训练集建模因素.csv",encoding='utf-8')
-print(train_data.shape) #获取目前的形状
-print(train_data.columns)
-trainy=train_data.OUTCOME
-trainy.head()
-trainx=train_data.drop('OUTCOME',axis=1)
-trainx.head()
-#导入测试集数据
-test_data =pd.read_csv("D:\\numpy\\001科研\\测试集建模因素.csv",encoding='utf-8')
-print(test_data.shape) #获取目前的形状
-print(test_data.columns)
-testy=test_data.OUTCOME
-testy.head()
-testx=test_data.drop('OUTCOME',axis=1)
-testx.head()
-#训练集数据标准化，建议用StandardScaler标准化连续变量
-scaler = StandardScaler()
-continuous_columns = ['P_F', 'LAC']  
-columns_to_copy = ['OUTCOME','decision_time','Nutritional_Methods','blood_glucose_0_7.8-10','blood_glucose_1_11.1','blood_glucose_2_2.8','mechanical_ventilation']  
-scaled_continuous_train = scaler.fit_transform(train_data[continuous_columns]) # 只选择连续变量列进行fit_transform 
-scaled_data_train = pd.DataFrame(scaled_continuous_train, columns=continuous_columns)  
-scaled_data_train[columns_to_copy] = train_data[columns_to_copy]
-trainy=scaled_data_train.OUTCOME
-trainy.head()
-trainx=scaled_data_train.drop('OUTCOME',axis=1)
-trainx.head()
-#测试集数据标准化
-scaled_continuous_test = scaler.fit_transform(test_data[continuous_columns]) # 只选择连续变量列进行fit_transform 
-scaled_data_test = pd.DataFrame(scaled_continuous_test, columns=continuous_columns)    
-scaled_data_test[columns_to_copy] = test_data[columns_to_copy]
-testy=scaled_data_test.OUTCOME
-testy.head()
-testx=scaled_data_test.drop('OUTCOME',axis=1)
-testx.head()
-from sklearn.metrics import roc_auc_score as AUC
-
-rfc=RandomForestClassifier(max_depth= 3, min_samples_leaf=6, min_samples_split=2, n_estimators=160,
-                           random_state=1,class_weight = 'balanced').fit(trainx, trainy.astype('int'))
-
-pred_rfc1 = rfc.predict_proba(trainx)
-print("AUC_train",AUC(trainy.astype('int'),pred_rfc1[:, 1]))
-joblib.dump(rfc, 'rfc12.pkl')
 # Load the model
 model = joblib.load('rfc12.pkl')        
 # Define feature options         
